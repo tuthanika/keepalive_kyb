@@ -1,0 +1,30 @@
+name: keepalive_kyb
+
+on:
+  schedule:
+    # Nó chạy 6 ngày một lần và thời gian chạy do chính bạn đặt ra (ở đây nó chạy lúc 7:14 giờ GMT+7)
+    - cron: '14 0 */6 * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Keepalive
+      run: python3 koyeb.py
+      env:
+        KOY_EB: ${{ secrets.KOY_EB }}
+        TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+        TG_USER_ID: ${{ secrets.TG_USER_ID }}

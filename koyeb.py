@@ -13,7 +13,7 @@ try:
     from sendNotify import send
 except:
     def send(*args):
-        print("未找到通知文件sendNotify.py不启用通知！")
+        print("Không tìm thấy tệp thông báo sendNotify.py không bật thông báo！")
 
 List = []
 session = requests.Session()
@@ -53,33 +53,33 @@ def auto_living(token):
                     'user-agent': 'Mozilla/5.0 (Linux; Android 10; PBEM00) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.52 Mobile Safari/537.36'
                 }
                 if list_date.get('apps')[i]['status'].lower() == "healthy":
-                    List.append(f"{list_date.get('apps')[i]['name']} 应用运行正常！！！")
+                    List.append(f"{list_date.get('apps')[i]['name']} Ứng dụng chạy tốt！！！")
                 elif list_date.get('apps')[i]['status'].lower() == "paused":
-                    List.append(f"{list_date.get('apps')[i]['name']} 应用已暂停运行！！！")
+                    List.append(f"{list_date.get('apps')[i]['name']} Ứng dụng bị tạm dừng！！！")
                     res_run = session.post(run_url, headers=ac_head)
                     if res_run.status_code == 200:
-                        List.append(f"启动命令已发送，应用将在3分钟后恢复正常！！！")
+                        List.append(f"Lệnh khởi động đã được gửi và ứng dụng sẽ trở lại bình thường sau 3 phút！！！")
                     else:
-                        List.append(f"启动命令发送出错，请检查url！！！")
+                        List.append(f"Lỗi gửi lệnh khởi động, vui lòng kiểm tra url！！！")
                 elif list_date.get('apps')[i]['status'].lower() == "resuming":
-                    List.append(f"{list_date.get('apps')[i]['name']} 应用正在启动中！！！")
+                    List.append(f"{list_date.get('apps')[i]['name']} Ứng dụng đang bắt đầu！！！")
                 else:
-                    List.append(f"{list_date.get('apps')[i]['name']} 应用运行出错！！！")
+                    List.append(f"{list_date.get('apps')[i]['name']} Lỗi chạy ứng dụng！！！")
                     res_stop = session.post(stop_url, headers=ac_head)
                     if res_stop.status_code == 200:
-                        List.append(f"暂停命令已发送，等待1分钟后发送启动命令")
+                        List.append(f"Lệnh tạm dừng đã được gửi. Đợi 1 phút trước khi gửi lệnh bắt đầu.")
                     else:
-                        List.append(f"暂停命令发送出错，请检查url！！！")
+                        List.append(f"Lỗi gửi lệnh tạm dừng, vui lòng kiểm tra url！！！")
                     time.sleep(60)
                     res_run = session.post(run_url, headers=ac_head)
                     if res_run.status_code == 200:
-                        List.append(f"启动命令已发送，应用将在3分钟后恢复正常！！！")
+                        List.append(f"Lệnh khởi động đã được gửi và ứng dụng sẽ trở lại bình thường sau 3 phút！！！")
                     else:
-                        List.append(f"启动命令发送出错，请检查url！！！")
+                        List.append(f"Lỗi gửi lệnh khởi động, vui lòng kiểm tra url！！！")
         else:
-            List.append(f"当前账户未创建实例应用！！！")
+            List.append(f"Không có ứng dụng phiên bản nào được tạo cho tài khoản hiện tại！！！")
     else:
-        List.append(f"获取账户应用信息出错，请检查url！！！")
+        List.append(f"Đã xảy ra lỗi khi lấy thông tin ứng dụng tài khoản, vui lòng kiểm tra url！！！")
         print(res_list.text)
 
 def login(usr, pwd):
@@ -108,9 +108,9 @@ def login(usr, pwd):
         resp = session.get(check_url, headers=check_head)
         if resp.status_code == 200:
             info = resp.json()
-            List.append(f"账号`{info.get('user').get('name')}`登陆成功")
+            List.append(f"Tài khoản`{info.get('user').get('name')}`Đăng nhập thành công")
             List.append(f"ID：{info.get('user').get('id')}")
-            List.append(f"注册日期：{get_time_stamp(info.get('user').get('created_at'))}")
+            List.append(f"Ngày đăng ký：{get_time_stamp(info.get('user').get('created_at'))}")
             lastlogin_url = 'https://app.koyeb.com/v1/activities?offset=0&limit=20'
             lastlogin_head = {
                 'authorization': f'Bearer {token}',
@@ -125,10 +125,10 @@ def login(usr, pwd):
                 j = 0
                 for i in range(len(lastlogin.get('activities'))):
                     if lastlogin.get('activities')[i].get('object').get('name') == "console" and j < 2:
-                        if lastlogin.get('count') > 1 and j == 1:
-                            List.append(f"上次登录日期：{get_time_stamp(lastlogin.get('activities')[i].get('created_at'))}")
+                        if lastlogin.get('count') is not None and lastlogin.get('count') > 1 and j == 1:
+                            List.append(f"Ngày đăng nhập cuối cùng：{get_time_stamp(lastlogin.get('activities')[i].get('created_at'))}")
                         else:
-                            List.append(f"当前登录日期：{get_time_stamp(lastlogin.get('activities')[i].get('created_at'))}")
+                            List.append(f"Ngày đăng nhập hiện tại：{get_time_stamp(lastlogin.get('activities')[i].get('created_at'))}")
                         j += 1
             else:
                 print(resg.text)
@@ -137,13 +137,13 @@ def login(usr, pwd):
         # 自动保活应用
         auto_living(token)
     else:
-        List.append('账号登陆失败: 账号或密码错误')
+        List.append('Đăng nhập tài khoản không thành công: sai tài khoản hoặc mật khẩu')
         List.append(res.text)
 
 
 if __name__ == '__main__':
     delay_sec = random.randint(1,50)
-    List.append(f'随机延时{delay_sec}s')
+    List.append(f'Độ trễ ngẫu nhiên{delay_sec}s')
     time.sleep(delay_sec)
     i = 0
     if 'KOY_EB' in os.environ:
@@ -151,13 +151,13 @@ if __name__ == '__main__':
         for x in users:
             i += 1
             name, pwd = x.split('-')
-            List.append(f'===> [账号{str(i)}]Start <===')
+            List.append(f'===> [Tài khoản{str(i)}]Start <===')
             login(name, pwd)
-            List.append(f'===> [账号{str(i)}]End <===\n')
+            List.append(f'===> [Tài khoản{str(i)}]End <===\n')
             time.sleep(1)
         tt = '\n'.join(List)
         print(tt)
         send('koyeb', tt)
     else:
-        print('未配置环境变量')
-        send('koyeb', '未配置环境变量')
+        print('Biến môi trường không được cấu hình')
+        send('koyeb', 'Biến môi trường không được cấu hình')
